@@ -1,0 +1,30 @@
+import numpy as np 
+import pandas as pd 
+import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+train_data = pd.read_csv("../input/train.csv")
+train_data['LoanAmount'].fillna(train_data['LoanAmount'].mean(), inplace=True)
+train_data['Self_Employed'].fillna('No', inplace=True)
+train_data['Gender'].fillna(train_data['Gender'].mode()[0], inplace=True)
+train_data['Married'].fillna(train_data['Married'].mode()[0], inplace=True)
+train_data['Dependents'].fillna(train_data['Dependents'].mode()[0], inplace=True)
+train_data['Loan_Amount_Term'].fillna(train_data['Loan_Amount_Term'].mode()[0], inplace=True)
+train_data['Credit_History'].fillna(train_data['Credit_History'].mode()[0], inplace=True)
+
+var_mod = ['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'Property_Area', 'Loan_Status']
+le = LabelEncoder()
+for i in var_mod:
+    train_data[i] = le.fit_transform(train_data[i])
+
+X = train_data[['Credit_History','Gender','Married','Education']]
+y = train_data['Loan_Status']
+
+model = DecisionTreeClassifier()
+model.fit(X, y)
+predictions = model.predict(X)
+print(accuracy_score(predictions, y))
